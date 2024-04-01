@@ -1,7 +1,7 @@
 var socket = io();
 
-var createRoom = document.getElementById("createRoom");
-var joinRoom = document.getElementById("joinRoom");
+var createRoom = document.getElementById("create-room");
+var joinRoomDialog = document.getElementById("join-room-dialog");
 var roomInfoDialog = document.getElementById("room-info-dialog");
 var closeDialogBtn = document.getElementById("close-dialog");
 
@@ -10,7 +10,7 @@ createRoom.addEventListener("click", () => {
   window.location.replace("bingo.html");
 });
 
-joinRoom.addEventListener("click", () => {
+joinRoomDialog.addEventListener("click", () => {
   roomInfoDialog.showModal();
 });
 

@@ -4,14 +4,96 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Home</title>
+
+    <style>
+      /* Styles for the dialog */
+      #input-container {
+        display: flex;
+        flex-direction: column;
+      }
+
+      #button-container {
+        display: flex;
+      }
+
+      #room-info-dialog {
+        width: 40%;
+        background-color: #fff;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(236, 231, 231, 0.3);
+      }
+
+      /* Styles for the dialog header */
+      #room-info-dialog h2 {
+        margin-top: 0;
+        margin-bottom: 20px;
+        font-size: 20px;
+        color: #333;
+      }
+
+      /* Styles for the text field */
+      #room-name {
+        width: 80%;
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+        margin-bottom: 20px;
+      }
+
+      #room-name:focus {
+        outline: none;
+        border: 1px solid #ccc;
+      }
+
+      /* Styles for the buttons */
+      #join-room,
+      #close-dialog {
+        padding: 10px 20px;
+        font-size: 16px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      #join-room {
+        background-color: #007bff;
+        color: #fff;
+        margin-right: 10px;
+      }
+
+      #join-room:hover {
+        background-color: #0056b3;
+      }
+
+      #close-dialog {
+        background-color: #ccc;
+        color: #333;
+      }
+
+      #close-dialog:hover {
+        background-color: #999;
+      }
+    </style>
   </head>
   <body>
-    <button id="createRoom">Create a room</button>
-    <button id="joinRoom">Join a room</button>
+    <button id="create-room">Create a room</button>
+    <button id="join-room-dialog">Join a room</button>
 
     <dialog id="room-info-dialog">
       <h2>Enter room name</h2>
-      <button id="close-dialog">Close</button>
+
+      <div id="input-container">
+        <input type="text" name="room" id="room-name" />
+      </div>
+
+      <div id="button-container">
+        <button id="join-room">Join</button>
+        <button id="close-dialog">Close</button>
+      </div>
     </dialog>
     <!--  -->
   </body>
