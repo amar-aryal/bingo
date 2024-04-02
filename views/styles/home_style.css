@@ -1,3 +1,7 @@
+:root {
+  --green: #527853;
+}
+
 #input-container {
   display: flex;
   flex-direction: column;
@@ -22,6 +26,8 @@
   margin-bottom: 20px;
   font-size: 20px;
   color: #333;
+  font-weight: 400;
+  align-self: center;
 }
 
 /* Styles for the text field */
@@ -51,13 +57,9 @@
 }
 
 #join-room {
-  background-color: #007bff;
+  background-color: var(--green);
   color: #fff;
   margin-right: 10px;
-}
-
-#join-room:hover {
-  background-color: #0056b3;
 }
 
 #close-dialog {
@@ -65,12 +67,45 @@
   color: #333;
 }
 
-#close-dialog:hover {
-  background-color: #999;
-}
-
 #input-error-msg {
   color: red;
   font-size: 18px;
   font-weight: 300;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh; /* This will center the container vertically */
+}
+
+.row {
+  margin-bottom: 30px; /* Add some space between rows */
+}
+
+.container button {
+  padding: 15px 20px;
+  font-size: 16px;
+  /* background-color: #007bff; */
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 80vw;
+  max-width: 300px;
+}
+
+#create-room {
+  background-color: var(--green);
+}
+
+#join-room-dialog {
+  background-color: #ba704f; /*alternative: #DFA878*/
+}
+
+button:hover {
+  opacity: 0.9;
 }
