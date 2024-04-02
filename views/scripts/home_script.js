@@ -29,7 +29,18 @@ joinRoom.addEventListener("click", () => {
     inputErrorMsg.innerText = "Room name is empty!";
     return;
   } else {
-    inputErrorMsg.innerText = "";
     var roomName = roomNameInput.value;
+    socket.emit("CheckRoom", roomName);
+
+    socket.on("RoomExists", (data) => {
+      console.log(`Room ${data.room} exists: ${data.roomExists}`);
+
+      if (data.roomExists) {
+        // join the room
+        socket.emit("JoinRoom", data.room);
+      } else {
+        inputErrorMsg.innerText = "Room does not exist!";
+      }
+    });
   }
 });
