@@ -68,3 +68,9 @@
 #close-dialog:hover {
   background-color: #999;
 }
+
+#input-error-msg {
+  color: red;
+  font-size: 18px;
+  font-weight: 300;
+}
