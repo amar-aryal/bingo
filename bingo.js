@@ -14,7 +14,7 @@ const gameEventsHandler = (server) => {
     var connectedUsers = [];
     //
     console.log("CONNECTED");
-    socket.on("CreateNewRoom", (room) => {
+    socket.on("JoinRoom", (room) => {
       // creating new room
       // the user who creates the room by default joins the room
 
@@ -23,18 +23,19 @@ const gameEventsHandler = (server) => {
         connectedUsers.push(socket.id);
         console.log(`Room: ${room}`);
         console.log(socket.rooms);
+        console.log(connectedUsers);
       } catch (error) {
         console.log(error);
       }
     });
 
-    socket.on("JoinRoom", (room) => {
-      // assuming the socket.id as a unique user identifier, after joining room, the user is added to the room
-      // NOTE: socket.id is automatically assigned to each new connected client
-      socket.join(room);
-      connectedUsers.push(socket.id);
-      console.log(connectedUsers);
-    });
+    // socket.on("JoinRoom", (room) => {
+    //   // assuming the socket.id as a unique user identifier, after joining room, the user is added to the room
+    //   // NOTE: socket.id is automatically assigned to each new connected client
+    //   socket.join(room);
+    //   connectedUsers.push(socket.id);
+    //   console.log(connectedUsers);
+    // });
 
     socket.on("LeaveRoom", (room) => {
       socket.leave(room);
@@ -45,6 +46,14 @@ const gameEventsHandler = (server) => {
     socket.on("GenerateNumber", () => {
       const number = Math.floor(Math.random(1, 75));
       socket.emit(GenerateNextNumber, number);
+    });
+
+    // while joining room, checking if the given room exists
+    socket.on("CheckRoom", (room) => {
+      const roomExists = io.sockets.adapter.rooms.has(room);
+      console.log(`${room} ${roomExists}`);
+
+      socket.emit("RoomExists", { room, roomExists });
     });
 
     socket.on("Disconnect", () => {
