@@ -3,9 +3,13 @@ var socket = io();
 // for directly creating room
 var createRoom = document.getElementById("create-room");
 
+function createNewRoom() {
+  const roomName = `Room${Math.floor(Math.random() * 10000)}`;
+  socket.emit("CheckRoom", roomName, true);
+}
+
 createRoom.addEventListener("click", () => {
-  checkAndJoinRoom(true);
-  // window.location.replace("bingo.html");
+  createNewRoom();
 });
 
 // for joining existing room
@@ -22,6 +26,8 @@ joinRoomDialog.addEventListener("click", () => {
 
 closeDialogBtn.addEventListener("click", () => {
   roomInfoDialog.close();
+  inputErrorMsg.innerText = "";
+  roomNameInput.value = "";
 });
 
 joinRoom.addEventListener("click", () => {
@@ -29,31 +35,15 @@ joinRoom.addEventListener("click", () => {
     inputErrorMsg.innerText = "Room name is empty!";
     return;
   } else {
-    // socket.emit("CheckRoom", roomName);
-
-    // socket.on("RoomExists", (data) => {
-    //   console.log(`Room ${data.room} exists: ${data.roomExists}`);
-
-    //   if (data.roomExists) {
-    //     inputErrorMsg.innerText = "";
-
-    //     // set the user session token and then join the room
-    //     setUserSessionToken();
-    //     const userToken = getUserSessionToken();
-    //     socket.emit("JoinRoom", data.room, userToken);
-    //   } else {
-    //     inputErrorMsg.innerText = "Room does not exist!";
-    //   }
-    // });
-    checkAndJoinRoom(false);
+    var roomName = roomNameInput.value;
+    socket.emit("CheckRoom", roomName, false);
   }
 });
 
-// room check logic
 /**
- * this method is called when creating and joining room both.
+ * this callback method is called when creating and joining room both.
  * if creating:
- * - generates a unique name and checks if the name already exists
+ * - checks if the name already exists
  * - if name exists, then generate the name again until unique name found
  * - else create and join the new room
  *
@@ -62,46 +52,45 @@ joinRoom.addEventListener("click", () => {
  * - if exists, then join room
  * - else give error message
  */
-function checkAndJoinRoom(forCreateRoom) {
-  var roomName = roomNameInput.value;
 
-  socket.emit("CheckRoom", roomName);
+socket.on("RoomExists", (data) => {
+  console.log(`Room ${data.room} exists: ${data.roomExists}`);
 
-  socket.on("RoomExists", (data) => {
-    console.log(`Room ${data.room} exists: ${data.roomExists}`);
+  try {
+    // set and obtain the user session token
+    setUserSessionToken();
+    const userToken = getUserSessionToken();
 
-    try {
-      // set and obtain the user session token
-      setUserSessionToken();
-      const userToken = getUserSessionToken();
-
-      // the if block logic is for create room functionality
-      if (forCreateRoom) {
-        if (data.roomExists) {
-          // checkAndJoinRoom(true);
-        } else {
-          // generate a room name
-          const roomName = `Room${Math.floor(Math.random() * 10000)}`;
-          // join the room
-          socket.emit("JoinRoom", roomName, userToken);
-
-          console.log(`Room created: ${roomName}`);
-        }
+    // the if block logic is for create room functionality
+    if (data.forCreateRoom) {
+      if (data.roomExists) {
+        createNewRoom();
       } else {
-        // the else block logic is for join room functionality
-        if (data.roomExists) {
-          inputErrorMsg.innerText = "";
+        // join the room
+        socket.emit("JoinRoom", data.room, userToken);
 
-          socket.emit("JoinRoom", data.room, userToken);
-        } else {
-          inputErrorMsg.innerText = "Room does not exist!";
-        }
+        console.log(`Room created: ${data.room}`);
+
+        // window.location.replace("bingo.html");
       }
-    } catch (error) {
-      console.log(error);
+    } else {
+      // the else block logic is for join room functionality
+      if (data.roomExists) {
+        inputErrorMsg.innerText = "";
+
+        socket.emit("JoinRoom", data.room, userToken);
+
+        console.log(`Room joined: ${data.room}`);
+
+        // window.location.replace("bingo.html");
+      } else {
+        inputErrorMsg.innerText = "Room does not exist!";
+      }
     }
-  });
-}
+  } catch (error) {
+    console.log(error);
+  }
+});
 
 // session storage manipulation
 function setUserSessionToken() {

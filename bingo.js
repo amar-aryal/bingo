@@ -45,12 +45,12 @@ const gameEventsHandler = (server) => {
       socket.to(room).emit(GenerateNextNumber, number);
     });
 
-    // while joining room, checking if the given room exists
-    socket.on("CheckRoom", (room) => {
+    // while creating or joining room, checking if the given room exists
+    socket.on("CheckRoom", (room, forCreateRoom) => {
       const roomExists = io.sockets.adapter.rooms.has(room);
       console.log(`${room} ${roomExists}`);
 
-      socket.emit("RoomExists", { room, roomExists });
+      socket.emit("RoomExists", { room, roomExists, forCreateRoom });
     });
 
     socket.on("Disconnect", (userToken) => {
