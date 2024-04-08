@@ -1,27 +1,31 @@
-// TODO: try to implement making a separate room for game in web sockets (in this or make new project if decide to deploy)
-// TODO: new project - Bingo game (DONE)
-// TODO: socket io in node js - different rooms
 // TODO: Html css js frontend, if time to learn, use React or Vue
 // TODO: think more features
 // TODO: deploy in render or fly.io
 
+// TODO: error handling
+// TODO: plan about disconnection events and how to handle different conditions
+// TODO: add chat feature if possible
 const gameEventsHandler = (server) => {
   const io = require("socket.io")(server);
 
   io.on("connection", (socket) => {
-    //
+    // stores the numbers which are already crossed for the game session
     var numbersCrossed = [];
+    // stores the users joined in the current room session
     var connectedUsers = [];
     //
     console.log("CONNECTED");
-    socket.on("JoinRoom", (room) => {
+    socket.on("JoinRoom", (room, userToken) => {
       // creating new room
       // the user who creates the room by default joins the room
 
       try {
         socket.join(room);
-        connectedUsers.push(socket.id);
-        console.log(`Room: ${room}`);
+        connectedUsers.push(userToken);
+
+        // send the users list everytime someone new joins. For updating UI
+        socket.to(room).emit(connectedUsers);
+
         console.log(socket.rooms);
         console.log(connectedUsers);
       } catch (error) {
@@ -29,23 +33,16 @@ const gameEventsHandler = (server) => {
       }
     });
 
-    // socket.on("JoinRoom", (room) => {
-    //   // assuming the socket.id as a unique user identifier, after joining room, the user is added to the room
-    //   // NOTE: socket.id is automatically assigned to each new connected client
-    //   socket.join(room);
-    //   connectedUsers.push(socket.id);
-    //   console.log(connectedUsers);
-    // });
-
-    socket.on("LeaveRoom", (room) => {
+    socket.on("LeaveRoom", (room, userToken) => {
       socket.leave(room);
-      connectedUsers.splice(connectedUsers.indexOf(user), 1);
+      connectedUsers.splice(connectedUsers.indexOf(userToken), 1);
       console.log(connectedUsers);
     });
 
-    socket.on("GenerateNumber", () => {
+    socket.on("GenerateNumber", (room) => {
+      // this callback will be performed only for specified room
       const number = Math.floor(Math.random(1, 75));
-      socket.emit(GenerateNextNumber, number);
+      socket.to(room).emit(GenerateNextNumber, number);
     });
 
     // while joining room, checking if the given room exists
@@ -56,9 +53,10 @@ const gameEventsHandler = (server) => {
       socket.emit("RoomExists", { room, roomExists });
     });
 
-    socket.on("Disconnect", () => {
+    socket.on("Disconnect", (userToken) => {
+      connectedUsers.splice(connectedUsers.indexOf(userToken), 1);
       socket.disconnect();
-      console.log(`${socket.id} disconnected`);
+      console.log(`${userToken} disconnected`);
     });
   });
 };

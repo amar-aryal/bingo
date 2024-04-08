@@ -1,4 +1,5 @@
-// var socket =
+var socket = io();
+
 socket.emit("JoinRoom", "abcd");
 
 // Function to generate random numbers between 1 and 75
