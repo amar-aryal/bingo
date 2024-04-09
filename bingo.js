@@ -24,19 +24,13 @@ const gameEventsHandler = (server) => {
         connectedUsers.push(userToken);
 
         // send the users list everytime someone new joins. For updating UI
-        socket.to(room).emit(connectedUsers);
+        socket.to(room).emit("UpdateUsers", connectedUsers);
 
         console.log(socket.rooms);
         console.log(connectedUsers);
       } catch (error) {
         console.log(error);
       }
-    });
-
-    socket.on("LeaveRoom", (room, userToken) => {
-      socket.leave(room);
-      connectedUsers.splice(connectedUsers.indexOf(userToken), 1);
-      console.log(connectedUsers);
     });
 
     socket.on("GenerateNumber", (room) => {
@@ -53,9 +47,14 @@ const gameEventsHandler = (server) => {
       socket.emit("RoomExists", { room, roomExists, forCreateRoom });
     });
 
-    socket.on("Disconnect", (userToken) => {
-      connectedUsers.splice(connectedUsers.indexOf(userToken), 1);
+    socket.on("Disconnect", (room, userToken) => {
+      socket.leave(room);
+
       socket.disconnect();
+
+      connectedUsers.splice(connectedUsers.indexOf(userToken), 1);
+      socket.to(room).emit("UpdateUsers", connectedUsers);
+
       console.log(`${userToken} disconnected`);
     });
   });
