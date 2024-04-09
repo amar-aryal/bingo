@@ -1,4 +1,4 @@
-var socket = io();
+var socket = io("http://localhost:5000");
 
 // for directly creating room
 var createRoom = document.getElementById("create-room");
@@ -71,7 +71,9 @@ socket.on("RoomExists", (data) => {
 
         console.log(`Room created: ${data.room}`);
 
-        // window.location.replace("bingo.html");
+        setCurrentRoomName(data.room);
+
+        goToBingoPage();
       }
     } else {
       // the else block logic is for join room functionality
@@ -82,7 +84,9 @@ socket.on("RoomExists", (data) => {
 
         console.log(`Room joined: ${data.room}`);
 
-        // window.location.replace("bingo.html");
+        setCurrentRoomName(data.room);
+
+        goToBingoPage();
       } else {
         inputErrorMsg.innerText = "Room does not exist!";
       }
@@ -91,6 +95,13 @@ socket.on("RoomExists", (data) => {
     console.log(error);
   }
 });
+
+// go to new window
+function goToBingoPage() {
+  setTimeout(() => {
+    window.location.replace("bingo.html");
+  }, 3000);
+}
 
 // session storage manipulation
 function setUserSessionToken() {
@@ -111,5 +122,14 @@ function getUserSessionToken() {
   } catch (error) {
     console.log(error);
     return error;
+  }
+}
+
+function setCurrentRoomName(room) {
+  try {
+    sessionStorage.setItem("currentRoom", room);
+    console.log(`Room saved: ${room}`);
+  } catch (error) {
+    console.log(error);
   }
 }
