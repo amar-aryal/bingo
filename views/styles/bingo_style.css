@@ -1,3 +1,9 @@
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
 .box {
   width: 50px;
   height: 50px;
@@ -14,4 +20,28 @@
   clear: both;
   content: "";
   display: table;
+}
+
+.main {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+}
+
+.users-info,
+.game-info {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.users-info {
+  flex: 1;
+  background-color: aqua;
+}
+
+.game-info {
+  flex: 3;
+  background-color: antiquewhite;
 }
